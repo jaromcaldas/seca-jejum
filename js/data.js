@@ -3,7 +3,7 @@ const QUIZ_DATA = {
     seoTitle: "Seca Jejum",
     seoDescription: "",
     faviconUrl: "https://cakto-quiz-br01.b-cdn.net/uploads/00b8f142-f957-473d-b1dc-af8e8f9b5327.png",
-    checkoutUrl: "https://seca-jejum.pay.yampi.com.br/r/RGL08PRHVL",
+    checkoutUrl: "https://pay.kiwify.com.br/ajXNVtj",
     backRedirectUrl: "https://seguro-adquiragora.shop/back/",
     utmifyPixelId: "69fcc36fcf116a8432ce8ba5"
   },
