@@ -28,8 +28,10 @@
   }
 
   /** Append current URL params to a checkout / redirect URL,
-   *  filling in default UTM values only for keys not already present. */
-  function buildCheckoutUrl(baseUrl) {
+   *  filling in default UTM values only for keys not already present.
+   *  `extra` (optional) is an object of extra params to merge in
+   *  (ex.: fbp / fbc / fbclid para a CAPI da Kiwify). */
+  function buildCheckoutUrl(baseUrl, extra) {
     var utmDefaults = {
       utm_source: 'organic',
       utm_medium: '',
@@ -52,6 +54,12 @@
       merged.set(key, value);
     });
 
+    if (extra && typeof extra === 'object') {
+      Object.keys(extra).forEach(function (key) {
+        if (extra[key]) merged.set(key, extra[key]);
+      });
+    }
+
     Object.keys(utmDefaults).forEach(function (key) {
       if (!merged.has(key)) {
         merged.set(key, utmDefaults[key]);
@@ -60,6 +68,35 @@
 
     var finalQuery = merged.toString();
     return basePath + (finalQuery ? '?' + finalQuery : '') + hash;
+  }
+
+  /** True se a etapa contém algum botão de checkout (página de oferta) */
+  function stepHasCheckout(step) {
+    if (!step || !step.components) return false;
+    for (var i = 0; i < step.components.length; i++) {
+      if (step.components[i].type === 'button' && step.components[i].action === 'checkout') return true;
+    }
+    return false;
+  }
+
+  /** Mapeia ids de opções (índices) para os textos das opções de uma etapa */
+  function getStepOptionLabels(stepIndex, ids) {
+    var step = QUIZ_DATA.steps[stepIndex];
+    var labels = [];
+    if (!step || !step.components) return labels;
+    var items = null;
+    for (var i = 0; i < step.components.length; i++) {
+      if (step.components[i].type === 'options') {
+        items = step.components[i].items || step.components[i].options || [];
+        break;
+      }
+    }
+    if (!items) return ids;
+    for (var k = 0; k < ids.length; k++) {
+      var it = items[parseInt(ids[k], 10)];
+      labels.push(it ? (it.text || it.name || ids[k]) : ids[k]);
+    }
+    return labels;
   }
 
   /** Smooth-scroll to top of page */
@@ -179,6 +216,16 @@
       updateProgress(stepIndex);
       updateBackButton();
       preloadUpcoming(stepIndex);
+
+      // ---- Tracking: etapa alcançada + Lead ao chegar na oferta ----
+      if (window.SJTrack) {
+        var _st = QUIZ_DATA.steps[stepIndex];
+        window.SJTrack.stepReached(stepIndex, _st && _st.title);
+        if (stepHasCheckout(_st) && !quizState._leadFired) {
+          quizState._leadFired = true;
+          window.SJTrack.setLead({}, true);
+        }
+      }
 
       setTimeout(function () {
         container.classList.remove('fade-in');
@@ -784,6 +831,14 @@
                 var optionId = card.getAttribute('data-option-id');
                 quizState.answers[stepIndex] = optionId;
 
+                // ---- Tracking: resposta (1 evento por etapa + resposta) ----
+                if (window.SJTrack) {
+                  var _stp = QUIZ_DATA.steps[stepIndex];
+                  var _txtEl = card.querySelector('.option-text');
+                  var _ans = _txtEl ? _txtEl.textContent : optionId;
+                  window.SJTrack.answer(stepIndex, _stp && _stp.title, _stp && _stp.title, _ans);
+                }
+
                 if (isAutoProceed) {
                   // Visual feedback then navigate
                   setTimeout(function () {
@@ -844,6 +899,20 @@
           var action = btn.getAttribute('data-action');
           var url = btn.getAttribute('data-url');
 
+          // ---- Tracking: resposta de múltipla escolha (no clique de continuar) ----
+          if (window.SJTrack) {
+            var _cur = quizState.currentStep;
+            var _sel = quizState.selectedOptions[_cur];
+            var _ids = _sel ? Object.keys(_sel) : [];
+            quizState._answeredMulti = quizState._answeredMulti || {};
+            if (_ids.length && !quizState._answeredMulti[_cur]) {
+              quizState._answeredMulti[_cur] = true;
+              var _stpM = QUIZ_DATA.steps[_cur];
+              window.SJTrack.answer(_cur, _stpM && _stpM.title, _stpM && _stpM.title,
+                                    getStepOptionLabels(_cur, _ids));
+            }
+          }
+
           switch (action) {
             case 'nextStep':
               goToNextStep();
@@ -856,7 +925,9 @@
             case 'checkout':
               var checkoutUrl = QUIZ_DATA.settings && QUIZ_DATA.settings.checkoutUrl;
               if (checkoutUrl) {
-                window.location.href = buildCheckoutUrl(checkoutUrl);
+                var fbExtra = window.SJTrack ? window.SJTrack.getFbParams() : null;
+                if (window.SJTrack) window.SJTrack.initiateCheckout();
+                window.location.href = buildCheckoutUrl(checkoutUrl, fbExtra);
               }
               break;
             case 'redirect':
@@ -1192,6 +1263,11 @@
     renderStep(0);
     updateProgress(0);
     preloadUpcoming(0);
+
+    if (window.SJTrack) {
+      window.SJTrack.quizStart();
+      window.SJTrack.stepReached(0, QUIZ_DATA.steps[0] && QUIZ_DATA.steps[0].title);
+    }
   }
 
   // ----------------------------------------------------------
