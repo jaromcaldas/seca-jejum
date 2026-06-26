@@ -15,13 +15,8 @@ O quiz é single-page, então cada etapa dispara eventos manualmente via `window
 
 ## ⚠️ O que VOCÊ precisa fazer
 
-### 1. Colocar o Meta Pixel ID
-No arquivo `js/tracking.js`, troque o placeholder:
-```js
-META_PIXEL_ID: '__META_PIXEL_ID__',   // <<< coloque aqui o ID do seu Pixel
-```
-O ID está em **Gerenciador de Eventos → Fontes de dados → seu Pixel** (número de ~15-16 dígitos).
-Enquanto não preencher, o Meta fica desativado, mas o Supabase já grava tudo.
+### 1. Meta Pixel ID — ✅ CONFIGURADO
+Pixel ID **2085220528633875** já está em `js/tracking.js`.
 
 ### 2. Configurar a Kiwify (Purchase)
 No painel da Kiwify → **Apps / Integrações → Facebook (Meta)**:

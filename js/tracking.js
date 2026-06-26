@@ -17,7 +17,7 @@
   // (Gerenciador de Eventos → Fontes de dados → seu Pixel)
   // ----------------------------------------------------------
   var CONFIG = {
-    META_PIXEL_ID: '__META_PIXEL_ID__',          // <<< COLOQUE SEU PIXEL ID AQUI
+    META_PIXEL_ID: '2085220528633875',           // Pixel do Meta — Seca Jejum
     SUPABASE_URL:  'https://uhnptfhvjyuyritrhhda.supabase.co',
     SUPABASE_KEY:  'sb_publishable_qSleuIZv4vL-D0Kf5cMVYg_ZJ31DZxd',
     SUPABASE_TABLE: 'seca_jejum_quiz_events',
