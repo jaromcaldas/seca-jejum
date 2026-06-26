@@ -913,6 +913,28 @@
             }
           }
 
+          // ---- Tracking: respostas de campos digitados (altura/peso/idade) ----
+          if (window.SJTrack) {
+            var _curI = quizState.currentStep;
+            var _inputs = container.querySelectorAll('.quiz-input');
+            quizState._answeredInput = quizState._answeredInput || {};
+            if (_inputs.length && !quizState._answeredInput[_curI]) {
+              var _vals = [];
+              for (var _ii = 0; _ii < _inputs.length; _ii++) {
+                var _v = (_inputs[_ii].value || '').trim();
+                if (!_v) continue;
+                var _lblEl = container.querySelector('label[for="' + _inputs[_ii].id + '"]');
+                var _lbl = _lblEl ? _lblEl.textContent : '';
+                _vals.push(_lbl ? (_lbl + ': ' + _v) : _v);
+              }
+              if (_vals.length) {
+                quizState._answeredInput[_curI] = true;
+                var _stpI = QUIZ_DATA.steps[_curI];
+                window.SJTrack.answer(_curI, _stpI && _stpI.title, _stpI && _stpI.title, _vals.join(' | '));
+              }
+            }
+          }
+
           switch (action) {
             case 'nextStep':
               goToNextStep();
