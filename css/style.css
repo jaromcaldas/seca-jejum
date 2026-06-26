@@ -1,0 +1,1309 @@
+/* ============================================================
+   Seca Jejum - Quiz Funnel Styles
+   Mobile-first | Production-ready
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
+
+/* ----------------------------------------------------------
+   Design Tokens
+   ---------------------------------------------------------- */
+:root {
+  --color-primary: #00a36a;
+  --color-primary-dark: #008c5a;
+  --color-primary-light: rgba(0, 163, 106, 0.05);
+  --color-bg: #ffffff;
+  --color-text: #2d2d33;
+  --color-title: #000000;
+  --color-interactive: #ffffff;
+  --color-border: #e5e7eb;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --spacing: 16px;
+  --font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --transition: 0.2s ease;
+}
+
+/* ----------------------------------------------------------
+   Reset & Base
+   ---------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ----------------------------------------------------------
+   1. Layout
+   ---------------------------------------------------------- */
+.quiz-wrapper {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.quiz-container {
+  max-width: 480px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+#quiz-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+/* Component wrappers emitted by quiz.js */
+.paragraph {
+  width: 100%;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.button-container {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.quiz-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Header */
+#quiz-header {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+#quiz-header .header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0 12px;
+  position: relative;
+}
+
+#quiz-header .quiz-logo {
+  max-height: 28px;
+  width: auto;
+  margin: 0 auto;
+}
+
+.back-button {
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--color-gray-500);
+  font-size: 1.25rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  transition: background-color var(--transition), color var(--transition);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.back-button:hover {
+  background: var(--color-gray-100);
+  color: var(--color-text);
+}
+
+.back-button:disabled,
+.back-button.hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar .progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* Steps */
+.quiz-step {
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing);
+  flex: 1;
+}
+
+.quiz-step.active {
+  display: flex;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.quiz-step.exit {
+  display: flex;
+  animation: fadeOut 0.3s ease forwards;
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------------
+   2. Paragraph / Text (Quill HTML)
+   ---------------------------------------------------------- */
+h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-title);
+  text-align: center;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+h2 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-title);
+  text-align: center;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-title);
+  text-align: center;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+/* Quill alignment classes */
+.ql-align-center {
+  text-align: center;
+}
+
+.ql-align-justify {
+  text-align: justify;
+}
+
+.ql-align-right {
+  text-align: right;
+}
+
+.ql-align-left {
+  text-align: left;
+}
+
+/* Quill size classes */
+.ql-size-small {
+  font-size: 0.875rem;
+}
+
+.ql-size-large {
+  font-size: 1.25rem;
+}
+
+.ql-size-huge {
+  font-size: 1.5rem;
+}
+
+/* Lists */
+ul,
+ol {
+  padding-left: 1.5em;
+  margin: 8px 0;
+}
+
+ul li,
+ol li {
+  margin-bottom: 6px;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+/* Inline formatting */
+strong {
+  font-weight: 700;
+}
+
+em {
+  font-style: italic;
+}
+
+/* ----------------------------------------------------------
+   3. Options - Clickable Cards
+   ---------------------------------------------------------- */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.options-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.option-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color var(--transition), background-color var(--transition), box-shadow var(--transition);
+  background: var(--color-bg);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.option-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.option-card:active {
+  transform: scale(0.98);
+}
+
+.option-card.selected {
+  border: 2px solid var(--color-primary);
+  background-color: var(--color-primary-light);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+/* Option icon */
+.option-card .option-icon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.option-card .option-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+/* Option text */
+.option-text {
+  flex: 1;
+}
+
+.option-text p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+/* Disposition: imageFirst - icon before text (default layout) */
+.option-card.disposition-imageFirst {
+  flex-direction: row;
+}
+
+/* Disposition: textFirst - text before icon */
+.option-card.disposition-textFirst {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.option-card.disposition-textFirst .option-text {
+  flex: 1;
+}
+
+/* Disposition: noImage - no icon, center text */
+.option-card.disposition-noImage {
+  justify-content: center;
+  text-align: center;
+}
+
+.option-card.disposition-noImage .option-icon {
+  display: none;
+}
+
+.option-card.disposition-noImage .option-text {
+  flex: none;
+}
+
+/* Grid option cards */
+.options-grid-2 .option-card {
+  flex-direction: column;
+  text-align: center;
+  padding: 16px 12px;
+}
+
+.options-grid-2 .option-card .option-icon {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  font-size: 42px;
+}
+
+.options-grid-2 .option-card.disposition-textFirst {
+  flex-direction: column-reverse;
+  justify-content: center;
+}
+
+/* ----------------------------------------------------------
+   4. Buttons
+   ---------------------------------------------------------- */
+.quiz-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 24px;
+  background-color: var(--color-primary);
+  color: var(--color-interactive);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background-color var(--transition), transform 0.1s ease, box-shadow var(--transition);
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: none;
+}
+
+.quiz-button:hover {
+  background-color: var(--color-primary-dark);
+  box-shadow: 0 4px 12px rgba(0, 163, 106, 0.3);
+}
+
+.quiz-button:active {
+  transform: scale(0.98);
+}
+
+.quiz-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.quiz-button.checkout-btn {
+  font-size: 1.125rem;
+  padding: 18px 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ----------------------------------------------------------
+   5. Input Fields
+   ---------------------------------------------------------- */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.quiz-input {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  font-family: var(--font-family);
+  font-size: 1.25rem;
+  text-align: center;
+  color: var(--color-text);
+  background: var(--color-bg);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  width: 100%;
+}
+
+.quiz-input::placeholder {
+  color: var(--color-gray-400);
+}
+
+.quiz-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 163, 106, 0.15);
+}
+
+/* ----------------------------------------------------------
+   6. Alert Boxes
+   ---------------------------------------------------------- */
+.alert {
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border-left: 4px solid;
+}
+
+.alert-warning {
+  background-color: #fefce8;
+  border-left-color: #eab308;
+  color: #854d0e;
+}
+
+.alert-error {
+  background-color: #fef2f2;
+  border-left-color: #ef4444;
+  color: #991b1b;
+}
+
+.alert-info {
+  background-color: #eff6ff;
+  border-left-color: #3b82f6;
+  color: #1e40af;
+}
+
+.alert-success {
+  background-color: #f0fdf4;
+  border-left-color: var(--color-primary);
+  color: #166534;
+}
+
+.alert-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.alert-description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ----------------------------------------------------------
+   7. Images
+   ---------------------------------------------------------- */
+.quiz-image {
+  display: block;
+  border-radius: var(--radius);
+  margin: 0 auto;
+}
+
+.quiz-image.width-full {
+  width: 100%;
+}
+
+.quiz-image.width-big {
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quiz-image.width-medium {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quiz-image.width-small {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ----------------------------------------------------------
+   8. Spacer
+   ---------------------------------------------------------- */
+.spacer {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.spacer-sm {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.spacer-lg {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.spacer-xl {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+/* ----------------------------------------------------------
+   9. Progress / Loader
+   ---------------------------------------------------------- */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px 0;
+  width: 100%;
+}
+
+.loader-bar-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.loader-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.loader-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.loader-label {
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.loader-description {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-gray-500);
+  line-height: 1.5;
+}
+
+.loader-percentage {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ----------------------------------------------------------
+   10. Cartesian Chart
+   ---------------------------------------------------------- */
+.cartesian-container {
+  padding: 16px 0;
+  background: var(--color-bg);
+}
+
+.cartesian-chart {
+  position: relative;
+  height: 200px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 24px 8px 0;
+}
+
+.cartesian-bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  height: 100%;
+}
+
+.cartesian-bar {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  transition: height 0.6s ease;
+  position: relative;
+  min-height: 4px;
+}
+
+.cartesian-bar:hover {
+  opacity: 0.85;
+}
+
+.cartesian-label {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+  margin-top: 6px;
+}
+
+.cartesian-tooltip {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+.cartesian-tooltip.visible,
+.cartesian-bar-wrapper:hover .cartesian-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ----------------------------------------------------------
+   11. Level / BMI Indicator
+   ---------------------------------------------------------- */
+.level-container {
+  padding: 16px 0;
+}
+
+.level-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-title);
+  margin-bottom: 4px;
+}
+
+.level-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-gray-500);
+  margin-bottom: 12px;
+}
+
+.level-bar-container {
+  position: relative;
+  padding-top: 28px;
+  margin-bottom: 8px;
+}
+
+.level-bar {
+  height: 12px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(to right, #00a36a, #84cc16, #eab308, #f97316, #ef4444);
+}
+
+.level-indicator {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  transition: left 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.level-indicator span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-title);
+  white-space: nowrap;
+  background: var(--color-title);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: var(--radius);
+  margin-bottom: 2px;
+}
+
+.level-arrow {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid var(--color-title);
+}
+
+.level-legends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--color-gray-500);
+  margin-top: 4px;
+}
+
+/* ----------------------------------------------------------
+   12. Carousel
+   ---------------------------------------------------------- */
+.carousel-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  overflow: visible;
+  position: relative;
+}
+
+.carousel-track {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  position: relative;
+  min-height: 200px;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  position: relative;
+}
+
+.carousel-slide img {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  display: block;
+}
+
+.carousel-dots {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-gray-200);
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition), transform var(--transition);
+  padding: 0;
+}
+
+.carousel-dot:hover {
+  background: var(--color-gray-400);
+}
+
+.carousel-dot.active {
+  background: var(--color-primary);
+  transform: scale(1.25);
+}
+
+/* Carousel navigation arrows — fora da imagem */
+.carousel-arrow {
+  position: static;
+  flex-shrink: 0;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 163, 106, 0.35);
+  transition: background-color var(--transition), transform 0.1s ease, box-shadow var(--transition);
+  line-height: 1;
+  z-index: 1;
+}
+
+.carousel-arrow:hover {
+  background: var(--color-primary-dark);
+  box-shadow: 0 4px 12px rgba(0, 163, 106, 0.45);
+}
+
+.carousel-arrow:active {
+  transform: scale(0.92);
+}
+
+.carousel-arrow.prev {
+  margin-right: 8px;
+}
+
+.carousel-arrow.next {
+  margin-left: 8px;
+}
+
+/* ----------------------------------------------------------
+   17. Line Chart
+   ---------------------------------------------------------- */
+.linechart-container {
+  padding: 8px 0 16px;
+}
+
+.linechart-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-title);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.linechart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.lc-label {
+  font-family: var(--font-family);
+  font-size: 11px;
+  fill: var(--color-gray-500);
+}
+
+.lc-dot {
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.18));
+}
+
+.lc-callout {
+  font-family: var(--font-family);
+  font-size: 10.5px;
+  font-weight: 600;
+  fill: var(--color-gray-600);
+}
+
+/* ----------------------------------------------------------
+   18. FAQ Accordion
+   ---------------------------------------------------------- */
+.faq-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  background: var(--color-bg);
+  transition: background-color var(--transition);
+}
+
+.faq-question:hover {
+  background: var(--color-gray-50);
+}
+
+.faq-item.open .faq-question {
+  background: var(--color-primary-light);
+}
+
+.faq-question-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-title);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.faq-arrow {
+  font-size: 0.65rem;
+  color: var(--color-primary);
+  min-width: 16px;
+  text-align: center;
+  transition: transform var(--transition);
+}
+
+.faq-answer {
+  padding: 0 16px 16px;
+  background: var(--color-bg);
+}
+
+.faq-answer p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+/* ----------------------------------------------------------
+   13. Terms Footer
+   ---------------------------------------------------------- */
+.terms {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--color-gray-500);
+  padding: 20px 16px;
+  border-top: 1px solid var(--color-gray-200);
+  margin-top: auto;
+  line-height: 1.6;
+}
+
+.terms a {
+  color: var(--color-gray-500);
+  text-decoration: underline;
+}
+
+.terms a:hover {
+  color: var(--color-primary);
+}
+
+/* ----------------------------------------------------------
+   14. Animations
+   ---------------------------------------------------------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.4s ease forwards;
+}
+
+/* Skeleton loading placeholder */
+.skeleton {
+  background: linear-gradient(90deg, var(--color-gray-100) 25%, var(--color-gray-50) 50%, var(--color-gray-100) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius);
+}
+
+/* ----------------------------------------------------------
+   15. Utility Classes
+   ---------------------------------------------------------- */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-gray {
+  color: var(--color-gray-500);
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-lg {
+  font-size: 1.25rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.mt-1 {
+  margin-top: 8px;
+}
+
+.mt-2 {
+  margin-top: 16px;
+}
+
+.mt-3 {
+  margin-top: 24px;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.mb-1 {
+  margin-bottom: 8px;
+}
+
+.mb-2 {
+  margin-bottom: 16px;
+}
+
+.mb-3 {
+  margin-bottom: 24px;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ----------------------------------------------------------
+   16. Desktop Responsive
+   ---------------------------------------------------------- */
+@media (min-width: 768px) {
+  body {
+    background: #f5f5f5;
+  }
+
+  .quiz-wrapper {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffff;
+    min-height: 100vh;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .quiz-container {
+    padding: 16px 20px;
+  }
+
+  .option-card:hover {
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+
+  .quiz-button:hover {
+    box-shadow: 0 6px 16px rgba(0, 163, 106, 0.35);
+  }
+
+  h1 {
+    font-size: 1.875rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Large screens - extra breathing room */
+@media (min-width: 1024px) {
+  .quiz-wrapper {
+    margin-top: 0;
+    border-radius: 0;
+  }
+}
+
+/* Small devices - tighter spacing */
+@media (max-width: 374px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  .option-card {
+    padding: 12px 14px;
+  }
+
+  .quiz-button {
+    padding: 14px 20px;
+  }
+
+  .options-grid {
+    gap: 8px;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
