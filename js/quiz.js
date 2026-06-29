@@ -114,30 +114,10 @@
   }
 
   // ----------------------------------------------------------
-  // 3. Tracking & back-redirect setup
+  // 3. Tracking setup
   // ----------------------------------------------------------
 
   // Tracking scripts are injected inline in index.html <head>.
-
-  function setupBackRedirect() {
-    if (!QUIZ_DATA || !QUIZ_DATA.settings || !QUIZ_DATA.settings.backRedirectUrl) return;
-
-    var link = QUIZ_DATA.settings.backRedirectUrl.trim();
-    if (!link) return;
-
-    var paramStr = document.location.search.replace('?', '').toString();
-    var url = link + (link.indexOf('?') > 0 ? '&' : '?') + paramStr;
-
-    history.pushState({}, '', location.href);
-    history.pushState({}, '', location.href);
-    history.pushState({}, '', location.href);
-
-    window.addEventListener('popstate', function () {
-      setTimeout(function () {
-        location.href = url;
-      }, 1);
-    });
-  }
 
   // ----------------------------------------------------------
   // 4. Progress bar
@@ -1309,7 +1289,6 @@
   // ----------------------------------------------------------
 
   document.addEventListener('DOMContentLoaded', function () {
-    setupBackRedirect();
     initQuiz();
   });
 

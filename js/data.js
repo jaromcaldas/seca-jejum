@@ -2,10 +2,7 @@ const QUIZ_DATA = {
   settings: {
     seoTitle: "Seca Jejum",
     seoDescription: "",
-    faviconUrl: "https://cakto-quiz-br01.b-cdn.net/uploads/00b8f142-f957-473d-b1dc-af8e8f9b5327.png",
-    checkoutUrl: "https://pay.kiwify.com.br/ajXNVtj",
-    backRedirectUrl: "https://seguro-adquiragora.shop/back/",
-    utmifyPixelId: "69fcc36fcf116a8432ce8ba5"
+    checkoutUrl: "https://pay.kiwify.com.br/ajXNVtj"
   },
   designSettings: {
     general: { width: "small", spacing: "default", roundness: "default" },
@@ -1116,7 +1113,7 @@ const QUIZ_DATA = {
         // --- ANCORAGEM DE PREÇO ---
         {
           type: "paragraph",
-          content: '<h3 class="ql-align-center">Montar tudo isso com nutricionista passaria de <span style="text-decoration: line-through;">R$300</span>.</h3><p class="ql-align-center">O valor de tudo junto seria <span style="text-decoration: line-through;">R$97</span>. Mas porque você chegou até aqui e fez o seu diagnóstico, hoje sai por:</p><h1 class="ql-align-center" style="color: #00a36a;">R$19,90</h1><p class="ql-align-center">pagamento único · acesso imediato</p>'
+          content: '<h3 class="ql-align-center">Porque você chegou até aqui e fez o seu diagnóstico, hoje sai por apenas:</h3><h1 class="ql-align-center" style="color: #00a36a;">5x de R$5,98</h1><p class="ql-align-center">ou pagamento único de <strong>R$27,00</strong></p><p class="ql-align-center">acesso imediato</p>'
         },
         { type: "image", url: "https://i.ibb.co/6JW71xZJ/pagamento.png", width: "full" },
         { type: "button", text: "QUERO MEU PLANO AGORA", action: "checkout" },
