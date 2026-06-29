@@ -170,11 +170,8 @@
       return out;
     },
 
-    // Início do quiz
+    // Início do quiz — só Supabase (não vai pro Meta pra não poluir o Pixel)
     quizStart: function () {
-      var id = uuid();
-      metaTrack('ViewContent', { content_name: 'Quiz Seca Jejum' }, id, true);
-      metaTrack('QuizStart', {}, id, false);
       logSupabase({ event_name: 'QuizStart' });
     },
 
@@ -186,15 +183,10 @@
       logSupabase({ event_name: 'StepReached', step_index: stepIndex, step_title: stepTitle });
     },
 
-    // Respondeu uma pergunta (1 evento por etapa + resposta)
+    // Respondeu uma pergunta — só Supabase (cada resposta fica no back pra análise,
+    // não vai pro Meta pra não poluir o Pixel)
     answer: function (stepIndex, stepTitle, question, answer) {
       var answerStr = Array.isArray(answer) ? answer.join(' | ') : answer;
-      metaTrack('QuizStep', {
-        step_index: stepIndex,
-        step_title: stepTitle,
-        question: question || stepTitle,
-        answer: answerStr
-      }, uuid(), false);
       logSupabase({
         event_name: 'Answer',
         step_index: stepIndex,
