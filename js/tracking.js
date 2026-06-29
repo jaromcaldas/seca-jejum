@@ -1,31 +1,22 @@
 /* ============================================================
-   Seca Jejum — Camada de Tracking (Meta Pixel + Supabase)
+   Seca Jejum — Camada de Tracking (SOMENTE Supabase / background)
    ------------------------------------------------------------
-   - Inicializa o Meta Pixel e dispara eventos padrão e custom
-   - Advanced Matching (e-mail / telefone / nome hasheados pelo pixel)
-   - Deduplicação por eventID (pronto para CAPI futuro)
+   - NÃO dispara Meta Pixel. O pixel do Meta é gerenciado 100%
+     pela Utmify (tag em index.html). Aqui só registramos a
+     jornada do quiz no Supabase para análise interna.
    - Captura _fbp / _fbc / fbclid + UTMs e repassa ao checkout
-   - Registra cada etapa e resposta do quiz no Supabase
+     (Kiwify) — isso ajuda a CAPI da Kiwify, não é evento de pixel.
    Exposto como window.SJTrack — chamado pelo quiz.js
    ============================================================ */
 
 (function () {
   'use strict';
 
-  // ----------------------------------------------------------
-  // CONFIG  — preencha o META_PIXEL_ID com o ID do seu Pixel
-  // (Gerenciador de Eventos → Fontes de dados → seu Pixel)
-  // ----------------------------------------------------------
   var CONFIG = {
-    META_PIXEL_ID: '2085220528633875',           // Pixel do Meta — Seca Jejum
     SUPABASE_URL:  'https://uhnptfhvjyuyritrhhda.supabase.co',
     SUPABASE_KEY:  'sb_publishable_qSleuIZv4vL-D0Kf5cMVYg_ZJ31DZxd',
-    SUPABASE_TABLE: 'seca_jejum_quiz_events',
-    LOG_STEP_REACHED_TO_META: false  // true = manda cada etapa ao Meta também (mais ruído)
+    SUPABASE_TABLE: 'seca_jejum_quiz_events'
   };
-
-  var pixelReady = CONFIG.META_PIXEL_ID &&
-                   CONFIG.META_PIXEL_ID.indexOf('__META_PIXEL_ID__') === -1;
 
   // ----------------------------------------------------------
   // Helpers
@@ -65,53 +56,6 @@
 
   var SESSION_ID = getSessionId();
   var leadData = {};   // { name, email, phone } — preenchido quando o lead digita
-
-  // ----------------------------------------------------------
-  // Meta Pixel — bootstrap oficial
-  // ----------------------------------------------------------
-  function loadPixel() {
-    if (!pixelReady) {
-      console.warn('[SJTrack] META_PIXEL_ID não configurado — eventos do Meta desativados (Supabase segue ativo).');
-      return;
-    }
-    /* eslint-disable */
-    !function (f, b, e, v, n, t, s) {
-      if (f.fbq) return; n = f.fbq = function () {
-        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-      };
-      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
-      n.queue = []; t = b.createElement(e); t.async = !0; t.src = v;
-      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
-    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-    /* eslint-enable */
-
-    window.fbq('init', CONFIG.META_PIXEL_ID);
-    window.fbq('track', 'PageView');
-  }
-
-  function metaTrack(eventName, params, eventId, isStandard) {
-    if (!pixelReady || !window.fbq) return;
-    try {
-      var method = isStandard ? 'track' : 'trackCustom';
-      window.fbq(method, eventName, params || {}, eventId ? { eventID: eventId } : undefined);
-    } catch (e) { /* silencioso */ }
-  }
-
-  // Advanced Matching — re-inicializa o pixel com os dados do lead.
-  // O fbevents.js faz o hash (SHA-256) automaticamente no cliente.
-  function applyAdvancedMatching() {
-    if (!pixelReady || !window.fbq) return;
-    var ud = {};
-    if (leadData.email) ud.em = String(leadData.email).trim().toLowerCase();
-    if (leadData.phone) ud.ph = String(leadData.phone).replace(/\D/g, '');
-    if (leadData.name) {
-      var parts = String(leadData.name).trim().toLowerCase().split(/\s+/);
-      ud.fn = parts[0];
-      if (parts.length > 1) ud.ln = parts[parts.length - 1];
-    }
-    if (Object.keys(ud).length === 0) return;
-    try { window.fbq('init', CONFIG.META_PIXEL_ID, ud); } catch (e) {}
-  }
 
   // ----------------------------------------------------------
   // Supabase — insert via REST (anon, insert-only por RLS)
@@ -155,7 +99,7 @@
   }
 
   // ----------------------------------------------------------
-  // API pública
+  // API pública — só registra no Supabase (sem Meta Pixel)
   // ----------------------------------------------------------
   var SJTrack = {
     // fbp / fbc / fbclid para repassar ao checkout da Kiwify (ajuda a CAPI dela)
@@ -170,21 +114,17 @@
       return out;
     },
 
-    // Início do quiz — só Supabase (não vai pro Meta pra não poluir o Pixel)
+    // Início do quiz
     quizStart: function () {
       logSupabase({ event_name: 'QuizStart' });
     },
 
     // Entrou numa etapa (drop-off do funil)
     stepReached: function (stepIndex, stepTitle) {
-      if (CONFIG.LOG_STEP_REACHED_TO_META) {
-        metaTrack('QuizStep', { step_index: stepIndex, step_title: stepTitle }, uuid(), false);
-      }
       logSupabase({ event_name: 'StepReached', step_index: stepIndex, step_title: stepTitle });
     },
 
-    // Respondeu uma pergunta — só Supabase (cada resposta fica no back pra análise,
-    // não vai pro Meta pra não poluir o Pixel)
+    // Respondeu uma pergunta (1 registro por etapa + resposta)
     answer: function (stepIndex, stepTitle, question, answer) {
       var answerStr = Array.isArray(answer) ? answer.join(' | ') : answer;
       logSupabase({
@@ -197,31 +137,23 @@
       });
     },
 
-    // Capturou dados pessoais → Advanced Matching + Lead
+    // Capturou dados pessoais (guarda p/ enriquecer os registros do Supabase)
     setLead: function (data, fireLeadEvent) {
       if (data && typeof data === 'object') {
         if (data.name)  leadData.name = data.name;
         if (data.email) leadData.email = data.email;
         if (data.phone) leadData.phone = data.phone;
       }
-      applyAdvancedMatching();
       if (fireLeadEvent) {
-        var id = uuid();
-        metaTrack('Lead', { content_name: 'Quiz Seca Jejum' }, id, true);
         logSupabase({ event_name: 'Lead' });
       }
     },
 
     // Clique no botão de compra (antes de ir pra Kiwify)
     initiateCheckout: function () {
-      var id = uuid();
-      metaTrack('InitiateCheckout', { content_name: 'Plano Seca Jejum' }, id, true);
       logSupabase({ event_name: 'InitiateCheckout' });
     }
   };
 
   window.SJTrack = SJTrack;
-
-  // Bootstrap do pixel o quanto antes
-  loadPixel();
 })();
